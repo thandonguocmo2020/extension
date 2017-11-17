@@ -89,6 +89,11 @@ gulp.task('chromeManifest', () => {
     .pipe(gulp.dest('dist'));
 });
 
+// gulp.task('copy', function () {
+//   gulp.src('app/styles/*')
+//     .pipe(gulp.dest('dist/styles/'));
+// });
+
 gulp.task('babel', () => {
   return gulp.src('app/scripts.babel')
     .pipe(webpackStream(require('./webpack.config.js'), webpack)
@@ -141,6 +146,7 @@ gulp.task('build', (cb) => {
     ['html', 'images', 'extras'],
     'size', cb);
 });
+
 
 gulp.task('default', ['clean'], cb => {
   runSequence('build', cb);
