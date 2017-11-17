@@ -1,0 +1,9 @@
+box {
+    display: block;
+    height: 180px;
+    background: rgb(196, 192, 192);
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+}

@@ -1,0 +1,23 @@
+// làm chức năng quét qua page singe page có sử dụng cache.
+
+1. logic nằm tại app/script.babel/contentscript.js ==> background/index.vue hàm created
+
+2. Mỗi khi DOMNodeInserted được kích hoạt nó sẽ check dom xem dữ liệu có thay đổi. 
+
+Nếu có dữ liệu thay đổi nó bắt đầu scroll từ theo chiều dọc trang.
+
+3. Mỗi lần scroll thường các trang sẽ reload xoay để báo hiệu dữ liệu đang tải => 
+
+dữ liệu sẽ được tải nút đó được thêm vào DOM đồng nghĩa DOM có sự thay đổi event cứ tiếp tục xảy ra đến khi quá trình kết thúc.
+
+
+Trong quá trình đó chúng ta liên tục đẩy vào mảng bằng cách quét qua tất cả thẻ a để lấy id hoặc username của người dùng.
+
+
+4. Check để dừng quét.
+
+Sử dụng hàm  setInterval mỗi 10s hoặc 20s nó sẽ check xem cái mảng kia có tiếp tục tăng hay dừng lại.
+
+Nếu dừng lại dừng quét. Chúng ta có thể dùng thêm biến count để cho quét lại theo số lần tương ứng.
+
+
