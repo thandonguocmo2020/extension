@@ -16,7 +16,7 @@
   },
   "permissions": [
     "tabs",
-    "https://www.pinterest.com/*/*",
+    "https://www.pinterest.com/*",
     "background",
     "bookmarks",
     "clipboardRead",
@@ -44,7 +44,7 @@
   "content_scripts": [
     {
       "matches": [
-        "https://www.pinterest.com/*/*"
+        "https://www.pinterest.com/*"
       ],
       "js": [
         "scripts/contentscript.js"

@@ -21,3 +21,4 @@ Sử dụng hàm  setInterval mỗi 10s hoặc 20s nó sẽ check xem cái mản
 Nếu dừng lại dừng quét. Chúng ta có thể dùng thêm biến count để cho quét lại theo số lần tương ứng.
 
 
+5. 

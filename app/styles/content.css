@@ -1,8 +1,7 @@
 
 .main-extension {
     display: block;
-    height: 220px;
-    background: rgb(196, 192, 192);
+    min-height: 100px;
     position: fixed;
     bottom: 0;
     left: 0;
