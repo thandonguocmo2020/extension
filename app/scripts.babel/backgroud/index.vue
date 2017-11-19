@@ -145,7 +145,7 @@ export default {
         if (data.stt == 1) {
           _this.msgLogin = data.msg;
           localStorage.setItem("auth", 2);
-          localStorage.setItem("uid", data.uid);
+          localStorage.setItem("uid", data._uid);
           location.reload();
         } else {
           _this.msgLogin = data.msg;
