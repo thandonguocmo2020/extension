@@ -69,9 +69,9 @@
                             <button type="button" class="btn btn-warning btn-sm mr-10"  @click="stopScanner" name="stop-scanner">Dừng Quét</button>
                           </div>
 
-                          <div class="col-4">
+                          <!-- <div class="col-4">
                              <input type="text" class="form-control form-control-sm"  @input="target" v-model="targetId" name="tid" id="tid"  placeholder="Target Id">
-                          </div> 
+                          </div>  -->
                         <div>
                             <button  id="dowload" class="btn btn-info btn-sm mr-10 pull-right"  @click="dowloadFile" name="stop-scanner">Lưu Ra File</button>  
                            
