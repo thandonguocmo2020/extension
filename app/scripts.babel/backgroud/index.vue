@@ -298,9 +298,9 @@ export default {
       $("body").on("DOMNodeInserted", OnNodeInserted);
       // function handler
       function OnNodeInserted(event) {
-        _this.n++;
         // default
         if (_this.stop != 1 && _this.stop != 0) {
+          _this.n++;
           window.scrollTo(0, document.body.scrollHeight);
 
           $("a").each(function() {
@@ -312,6 +312,8 @@ export default {
           // stop if pause
 
           if (_this.stop == 1) {
+            _this.n++;
+
             _this.links.filter((item, index) => {
               if (index > 0) {
                 if (item.split("/").length == 3) {
@@ -320,7 +322,7 @@ export default {
               }
             });
             _this.status = "Đã dừng quét";
-            _this.stop = 0
+            _this.stop = 0;
           }
         }
       }
