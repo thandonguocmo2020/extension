@@ -12,6 +12,9 @@
             </div>
             <div class="card-block">
 
+            <div class="alert alert-warning" role="alert" v-if="alert">
+              <strong>Warning!</strong> {{alert}}
+            </div>
               <div class="row" v-if="auth != '2'">
                 <div class="col-md-6">
                   <form v-on:submit.prevent="login($event)" class="form-inline">
@@ -29,46 +32,52 @@
                     </form>
                 </div>
                 <div class="col-md-6">
-
                     <div>{{ msgLogin }}</div>
-
                 </div>
               </div>
         
 
               <div class="row" v-if="auth == '2'">
-                <div class="col-md-6">
+                <div class="col-md-5">
 
-               
-                  <form @submit.prevent class="form-inline">
-                  
+                  <div class="row">
+                        <div class="form-group mx-sm-4">
+                            <label for="kwd" class="sr-only">Keyword</label>
+                            <input type="text" class="form-control form-control-sm"  v-model="kwd"  name="kwd" id="search" placeholder="Tu Khoa">
+                          </div>
+                          
+                          <div class="form-group mx-sm-2">
+                            <select class="custom-select mb-2 mr-sm-2 mb-sm-0 form-control-sm" id="type">
+                              <option selected value="people">Theo loại...</option>
+                              <option value="boards">boards</option>
+                              <option value="people">people</option>
+                              <option value="pins">pins</option>
+                            </select>
 
-                  <div class="form-group mx-sm-3">
-                    <label for="kwd" class="sr-only">Keyword</label>
-                    <input type="text" class="form-control" name="kwd" id="search" placeholder="Tu Khoa">
+                        </div>
+                        <div class="form-group mx-sm-2">
+                            <button type="button" class="btn btn-primary btn-sm mr-10"  @click="search" name="submit">Tìm Kiếm</button>
+                        </div>
                   </div>
-                    <div class="form-group mx-sm-3">
 
-                    <select class="custom-select mb-2 mr-sm-2 mb-sm-0" id="type">
-                    <option selected value="people">Theo loại...</option>
-                    <option value="boards">boards</option>
-                    <option value="people">people</option>
-                    <option value="pins">pins</option>
-                  </select>
-
-                  </div>
-
-                  <button type="button" class="btn btn-primary btn-sm mr-10"  @click="search" name="submit">Tìm Kiếm</button>
-              
-                </form>
                 </div>
         
-                <div class="col-md-6"> 
-                    <button type="button" class="btn btn-success btn-sm mr-10"  @click="scanner" name="scanner">Quét Link Này</button>
-                    <button type="button" class="btn btn-warning btn-sm mr-10"  @click="stopScanner" name="stop-scanner">Dừng Quét</button>
-                
-                    <button type="button" class="btn btn-info btn-sm mr-10 pull-right"  @click="sendLink" name="stop-scanner">Lưu Dữ Liệu</button>
-                
+                <div class="col-md-7"> 
+                        <div class="row">
+                          <div class="col-5">
+                            <button type="button" class="btn btn-success btn-sm mr-10"  @click="scanner" name="scanner">Quét Link Này</button>
+                            <button type="button" class="btn btn-warning btn-sm mr-10"  @click="stopScanner" name="stop-scanner">Dừng Quét</button>
+                          </div>
+
+                          <div class="col-4">
+                             <input type="text" class="form-control form-control-sm"  @input="target" v-model="targetId" name="tid" id="tid"  placeholder="Target Id">
+                          </div> 
+                        <div>
+                            <button  id="dowload" class="btn btn-info btn-sm mr-10 pull-right"  @click="dowloadFile" name="stop-scanner">Lưu Ra File</button>  
+                           
+                        </div>
+
+                      </div>
                   </div>
                 </div>
              </div>
@@ -79,12 +88,12 @@
              <thead>
                 <tr class="table-info">
                   <th>Kết Quả</th>  
-                  <th>Số lần tải DOM</th>
-                  <th>Số link đã nạp</th>
+                  <th>Lần tải</th> <!-- DOM LOAD -->
+                  <th>Đã nạp</th>
                 
                   <th>Trạng Thái</th>
                   <th>Thời gian quét </th>
-                  <th>Số lần reset load</th>
+                  <th>Số lần reload</th>
                 </tr>
               </thead>
     
@@ -99,8 +108,6 @@
       
             </table>
         
-  
-          
       <!-- DATA -->
       </div>
       <!-- END ACTIOn -->
@@ -121,17 +128,21 @@ import moment from "moment";
 export default {
   data() {
     return {
-      auth: localStorage.getItem("auth"), // string
+      auth: sessionStorage.getItem("auth"), // tạo tài khoản cho sử dụng extension
+      uid: sessionStorage.getItem("uid"), // user id của tài khoản
+      kwd: sessionStorage.getItem("kwd"), // tách list theo từ khóa nếu search
+      targetId: sessionStorage.getItem("tid"), //  áp dụng cho kênh nào với list tương ứng
+      // string
       msgLogin: "",
-      uid: localStorage.getItem("uid"),
       links: [],
       continue: 0,
-      stop: 0,
+      stop: 2,
       count: 0,
       n: 0, // load Dom n lần
       timeout: 0,
       status: "Đang quét",
-      result: []
+      result: [],
+      alert: null
     };
   },
 
@@ -144,65 +155,152 @@ export default {
       ).done(function(data) {
         if (data.stt == 1) {
           _this.msgLogin = data.msg;
-          localStorage.setItem("auth", 2);
-          localStorage.setItem("uid", data._uid);
+          sessionStorage.setItem("auth", 2);
+          sessionStorage.setItem("uid", data.uid);
           location.reload();
         } else {
           _this.msgLogin = data.msg;
-          localStorage.setItem("auth", 1);
-          localStorage.setItem("uid", null);
+          sessionStorage.setItem("auth", 1);
+          sessionStorage.setItem("uid", null);
         }
       });
     },
     logout() {
-      localStorage.removeItem("auth");
-      localStorage.removeItem("uid");
-      localStorage.removeItem("scanner");
+      sessionStorage.removeItem("auth");
+      sessionStorage.removeItem("uid");
+      sessionStorage.removeItem("scanner");
       location.reload();
     },
     search() {
       window.location = `https://www.pinterest.com/search/${$(
         "#type"
       ).val()}/?q=${$("#search").val()}`;
+      sessionStorage.setItem("kwd", $("#search").val());
+    },
+    target() {
+      let targetUrl = $("#tid").val();
+      sessionStorage.setItem("tid", targetUrl);
+
+      var jqxhr = $.post("https://localhost/api/v1/check/target", {
+        _tid: targetUrl
+      }).done(function(data) {
+        if (data.stt == 1) {
+          _this.alert = null;
+        } else {
+          _this.alert = "Target does not exist ! please update token. ";
+        }
+      });
     },
     scanner(start) {
-      localStorage.setItem("scanner", 1);
+      sessionStorage.setItem("scanner", 1);
       location.reload();
     },
     stopScanner() {
-      localStorage.setItem("scanner", 0);
+      sessionStorage.setItem("scanner", 0);
       this.stop = 1;
     },
-    sendLink() {
-      // if (this.result.length > 0) {
-      //   var jqxhr = $.get("/pinterest/link/follow/fetch", function() {
-      //     // alert("success");
-      //   })
-      //     .done(function(data) {
-      //       console.log(data);
-      //     })
-      //     .fail(function() {
-      //       console.log(error);
-      //     })
-      //     .always(function() {
-      //       console.log("finished");
-      //     });
-      // }
+    dowloadFile() {
+      let data = this.result.join(",");
+      let keyword = this.kwd || "pinterest user";
+      var a = document.createElement("a");
+      var file = new Blob([data], { type: "text/plain" });
+      a.href = URL.createObjectURL(file);
+      a.download = keyword + ".txt";
+      a.click();
     }
+    // sendLink(e) {
+
+    // let _this = this;
+    // let keyword = _this.kwd || "";
+    // let userId = _this.uid;
+    // let targetId = _this.targetId;
+
+    // if (userId && targetId && this.result.length > 0) {
+    //   // GET DATA So sánh match lookey
+    //   // list link by user  and targetid
+
+    //   var jqxhr = $.post("https://localhost/api/v1/link/follow", {
+    //     _uid: userId
+    //   })
+    //     .done(function(data) {
+    //       // list success
+    //       if (data.stt == 1) {
+    //         // list link foreach set keyloop HashMap
+
+    //         let lnk = [];
+    //         data.links.forEach(item => {
+    //           lnk[item.lnk] = item.lnk;
+    //         });
+
+    //         let _payload = [];
+
+    //         _this.result.forEach(item => {
+    //           if (!lnk[item]) {
+    //             _payload.push({
+    //               keyword: keyword,
+    //               _tid: targetId,
+    //               _uid: sessionStorage.getItem("uid"),
+    //               lnk: item
+    //             });
+    //           }
+    //         });
+
+    //         console.log(_payload);
+
+    //         if (_payload.length > 0) {
+    //           $.post("https://localhost/api/v1/link/follow/save", {
+    //             links: _payload
+    //           }).done(resutl => {
+    //             console.log(resutl);
+    //           });
+    //         } else {
+    //           console.log("the link has exists.");
+    //         }
+    //       } else {
+    //         // new
+    //         let _payload = [];
+
+    //         _this.result.forEach(item => {
+    //           _payload.push({
+    //             keyword: keyword,
+    //             _tid: targetId,
+    //             _uid: userId,
+    //             lnk: item
+    //           });
+    //         });
+    //         // save
+
+    //         console.log(_payload);
+
+    //         $.post("https://localhost/api/v1/link/follow/save", {
+    //           links: _payload
+    //         }).done(resutl => {
+    //           console.log(resutl);
+    //         });
+    //       }
+    //     })
+    //     .fail(function() {
+    //       console.log(error);
+    //     })
+    //     .always(function() {
+    //       console.log("finished");
+    //     });
+    // }
+    // }
   },
   created() {
     let _this = this;
 
     //  start scanner if scanner == 1. using local store start or stop default
-    if (localStorage.getItem("scanner") == 1 && _this.stop != 1) {
+    if (sessionStorage.getItem("scanner") == 1 && _this.stop != 1) {
       // event listen paginate load data
-      document.body.addEventListener("DOMNodeInserted", OnNodeInserted, true);
 
+      $("body").on("DOMNodeInserted", OnNodeInserted);
       // function handler
       function OnNodeInserted(event) {
         _this.n++;
         // default
-        if (_this.stop != 1) {
+        if (_this.stop != 1 && _this.stop != 0) {
           window.scrollTo(0, document.body.scrollHeight);
 
           $("a").each(function() {
@@ -212,13 +310,18 @@ export default {
           });
         } else {
           // stop if pause
-          _this.result = _this.links.filter((item, index) => {
-            if (index > 1) {
-              if (item.split("/").length == 3) return item;
-            }
-          });
 
-          _this.status = "Đã dừng quét";
+          if (_this.stop == 1) {
+            _this.links.filter((item, index) => {
+              if (index > 0) {
+                if (item.split("/").length == 3) {
+                  _this.result.push(item.replace(/\//g, ""));
+                }
+              }
+            });
+            _this.status = "Đã dừng quét";
+            _this.stop = 0
+          }
         }
       }
 
@@ -233,33 +336,26 @@ export default {
           } else {
             // x3 time stop
             if (_this.count < 3) {
-              _this.status = "Dữ liệu được kiểm tra lại 3 lần";
+              _this.status = "Dữ liệu được tải lại 3 lần";
               _this.count++;
             } else {
-              _this.result = _this.links.filter((item, index) => {
-                if (index > 1) {
-                  if (item.split("/").length == 3) return item;
+              _this.links.filter((item, index) => {
+                if (index > 0) {
+                  console.log(item.replace(/\//g, ""));
+                  if (item.split("/").length == 3)
+                    _this.result.push(item.replace(/\//g, ""));
                 }
               });
 
               clearInterval(timer);
               _this.status = "Đã quét xong";
-              console.log(_this.result);
             }
           }
         } else {
-          _this.result = _this.links.filter((item, index) => {
-            if (index > 1) {
-              if (item.split("/").length == 3) return item;
-            }
-          });
-
           clearInterval(timer);
-          _this.status = "Đã tạm dừng";
-          console.log(_this.result);
         }
         // END STOP
-      }, 10000);
+      }, 10000); // 10 giây để chờ nạp dữ liệu từ doom
     }
   }
 };
