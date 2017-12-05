@@ -1,4 +1,4 @@
-// làm chức năng quét qua page singe page có sử dụng cache.
+﻿// làm chức năng quét qua page singe page có sử dụng cache.
 
 1. logic nằm tại app/script.babel/contentscript.js ==> background/index.vue hàm created
 
@@ -21,4 +21,9 @@ Sử dụng hàm  setInterval mỗi 10s hoặc 20s nó sẽ check xem cái mản
 Nếu dừng lại dừng quét. Chúng ta có thể dùng thêm biến count để cho quét lại theo số lần tương ứng.
 
 
-5. 
+5. run app cài các module cần thiết
+
+npm i  
+
+// chạy lệnh để build app 
+gulp default

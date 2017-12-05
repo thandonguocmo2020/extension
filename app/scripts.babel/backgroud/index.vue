@@ -149,8 +149,9 @@ export default {
   methods: {
     login(e) {
       let _this = this;
+      // app phai co https  
       $.post(
-        "https://localhost/api/v1/login",
+        "https://api-pint.tranhoanghiep.com/api/v1/login",
         $(e.target).serialize()
       ).done(function(data) {
         if (data.stt == 1) {
@@ -315,7 +316,7 @@ export default {
             _this.n++;
 
             _this.links.filter((item, index) => {
-              if (index > 0) {
+              if (index > 1) {
                 if (item.split("/").length == 3) {
                   _this.result.push(item.replace(/\//g, ""));
                 }
@@ -342,7 +343,7 @@ export default {
               _this.count++;
             } else {
               _this.links.filter((item, index) => {
-                if (index > 0) {
+                if (index > 1) {
                   console.log(item.replace(/\//g, ""));
                   if (item.split("/").length == 3)
                     _this.result.push(item.replace(/\//g, ""));
