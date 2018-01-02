@@ -16,7 +16,7 @@
   },
   "permissions": [
     "tabs",
-    "https://www.pinterest.com/*",
+    "https://www.facebook.com/*",
     "background",
     "bookmarks",
     "clipboardRead",
@@ -44,7 +44,7 @@
   "content_scripts": [
     {
       "matches": [
-        "https://www.pinterest.com/*"
+        "https://www.facebook.com/*"
       ],
       "js": [
         "scripts/contentscript.js"
@@ -53,6 +53,7 @@
         "styles/content.css",
         "styles/bootstrap.min.css"
       ],
+      "html":"index.html",
       "run_at": "document_end",
       "all_frames": false
     }
